@@ -60,56 +60,9 @@ swipl -g correr -t halt pruebas.pl
 | r | ∫ cosh(x) dx | |
 | s | ∫ tanh(x) dx = ln(cosh x) | |
 
-## La interfaz (estilo "mesa de cartas")
-Diseño original inspirado en los videojuegos de cartas. **No usa imágenes, fuentes ni audio externos**:
-todo se genera por código (texturas, tipografía de píxeles y sonidos).
-
-* **Mesa de fieltro** con la integral tal como se escribe: ∫ (que flota y rebota si lo pulsas), límite
-  superior *b*, límite inferior *a*, la función y `dx`. Vista previa "Se lee:" con la ecuación dibujada.
-* **Teclado de botones 3D** (funciones, constantes, números y operadores). Las funciones dejan el cursor
-  dentro del paréntesis; en `a^x` queda seleccionada la base.
-* **CALCULAR**, **LIMPIAR TODO** (borra función, límites y resultados) y **COPIAR**.
-* **Marcador estilo "fichas × multiplicador":** caja azul F(b), caja roja F(a) y caja dorada con el área,
-  que cuenta desde cero con un "tic" por paso. Debajo, la ecuación exacta (fracciones apiladas).
-* **SOPORTADAS:** diálogo modal donde las 15 integrales son cartas de póker (palo, índices, brillo foil e
-  inclinación al pasar el mouse). La nota de cada carta aparece abajo.
-* **SONIDO: SI/NO** silencia los efectos.
-* Enter en cualquier recuadro = Calcular.
-
-### Animaciones
-Reparto de paneles y teclas al abrir, "juice" (rebote con giro) al pulsar, botones que se elevan al pasar el
-mouse, sacudida de la tarjeta al error, título con ola, ∫ flotante, cartas que se reparten e inclinan, y un
-fondo de remolino que se mueve lento con efecto de monitor CRT (líneas de barrido y viñeta).
-
-### Sonidos
-Sintetizados en tiempo real con `javax.sound` (clic, tick, carta, jugar, éxito, error, descartar, chip). Si
-el equipo no tiene salida de audio, el programa sigue en silencio sin errores.
-
-### Ecuaciones estilo calculadora TI
-Fracciones apiladas, superíndices, raíces y ∫ con límites, dibujados con `Graphics2D` (`MathRender.java`).
-Si una ecuación es muy ancha, se reduce sola para caber.
-
-### Para quien quiera modificarlo
-* Colores: `Theme.java`.   Tipografía de píxeles: `fx/PixelFont.java`.   Sonidos: `fx/Sfx.java`.
-* Animaciones: `fx/Anim.java` (un solo reloj) y `fx/Juice.java`.
-* Fondo y CRT: `BalatroBackground.java`, `CrtOverlay.java`.   Cartas: `CardTable.java`.
-
 ## Cómo escribir las expresiones
 * Multiplicación explícita: `3*x^2` (no `3x^2`). Potencia: `^` o `**`.
 * Decimales con punto. Constantes admitidas en coeficientes y límites: `pi`, `e`.
 * Exponentes negativos: `x^(-2)` o `x^-2`.
 * Si el intervalo [a,b] contiene x = 0 y hay potencias negativas, el sistema
   avisa que la integral es impropia en lugar de dar un número falso.
-
-## Arquitectura
-```
- Window (Swing) ──► Connection ──► swipl -g ejecutar calculo.pl -- "f" "a" "b"
-      ▲                │                         │
-      └── Resultado ◄──┴──── líneas clave=valor ◄┘
-```
-En Java: `Pretty` (texto plano) y `MathRender` (texto → árbol → cajas medidas → `Graphics2D`);
-`MathView` dibuja varias líneas de ecuaciones y `PanelResult` las muestra en tarjetas.
-
-En Prolog: `parsear` → `integral/2` (reglas) → `simplificar` → `evaluar_F`
-→ F(b) − F(a). La antiderivada se representa como lista `Coeficiente-Base`,
-así la linealidad se reduce a escalar y concatenar listas.
