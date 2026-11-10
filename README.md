@@ -1,6 +1,6 @@
 # Solución de integrales — Programación Declarativa, Proyecto Final 2026/02
 
-Sistema experto que, dada una función f(x) y dos límites a y b, calcula la
+Dada una función f(x) y dos límites a y b, calcula la
 **antiderivada** y el **área bajo la curva** entre a y b.
 
 * **Base de conocimiento:** SWI-Prolog (`src/main/resources/calculo.pl`)
